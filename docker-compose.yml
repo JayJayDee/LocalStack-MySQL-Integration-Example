@@ -4,6 +4,9 @@ networks:
   bridge:
     driver: bridge
 
+volumes:
+  dbdata:
+
 services:
   localstack:
     image: 'localstack/localstack'
@@ -11,21 +14,37 @@ services:
     environment:
       - SERVICES=sqs
       - DEFAULT_REGION=us-east-1
-      - DEBUG=1
       - DATA_DIR=/tmp/localstack/data
       - AWS_ACCESS_KEY_ID=qwer
       - AWS_SECRET_ACCESS_KEY=1234
       - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      - ./localstacks/volume:/var/lib/localstack
     ports:
       - '4566:4566'
     networks:
       - bridge
+
+  mysql:
+    image: 'mysql:8.0'
+    container_name: mysql
+    volumes:
+      - ./localstacks/mysql/conf.d:/etc/mysql/conf.d
+      - dbdata:/var/lib/mysql:rw
+    environment:
+      - "MYSQL_ROOT_PASSWORD=becon2020"
+    ports:
+      - '3306:3306'
+    networks:
+      - bridge
+  
 
   sample-app:
     build:
       context: .
     depends_on:
       - localstack
+      - mysql
     ports:
       - '8080:8080'
     environment:
@@ -33,5 +52,10 @@ services:
       - "AWS_ACCESS_KEY_ID=dummy-key-id"
       - "AWS_SECRET_ACCESS_KEY=dummy-secret-key"
       - "AWS_ENDPOINT=http://localstack:4566"
+      - "MYSQL_HOST=mysql"
+      - "MYSQL_PORT=3306"
+      - "MYSQL_DATABASE=becon_local"
+      - "MYSQL_USER=root"
+      - "MYSQL_PASSWORD=becon2020"
     networks:
       - bridge
