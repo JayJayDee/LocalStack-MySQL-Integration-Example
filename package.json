@@ -2,10 +2,11 @@
   "name": "localstack-mysql-integration-example",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node src/index.js",
+    "wait-for-ready": "node src/wait-for-containers.js"
   },
   "author": "",
   "license": "ISC",

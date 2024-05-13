@@ -60,3 +60,5 @@ services:
       - "MYSQL_PASSWORD=becon2020"
     networks:
       - bridge
+    command: >
+      npm run wait-for-ready

@@ -6,7 +6,7 @@ COPY package.json .
 COPY package-lock.json . 
 
 RUN npm install
-COPY index.js .
+COPY src/ /app/src/
 
 ARG HTTP_PORT
 ARG AWS_ENDPOINT 
